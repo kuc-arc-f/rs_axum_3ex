@@ -119,6 +119,7 @@ async fn main() -> anyhow_free::Result<()> {
         .route("/api/login", post(user_login))
         .route("/api/login/start", post(login_start))
         .route("/api/login/finish", post(login_finish))
+        .route("/api/user_get_id", post(user_get_id))
         .route("/api/me", get(me))
         .route("/api/logout", post(logout))
         .fallback_service(ServeDir::new("static"))
@@ -128,6 +129,31 @@ async fn main() -> anyhow_free::Result<()> {
     println!("listening on http://localhost:3000");
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+async fn user_get_id(
+    State(s): State<AppState>,
+    Json(payload): Json<models::UserIdReq>,
+) -> ApiResult<Json<Value>> {
+    let mut user = models::UserRes {
+        email: "".to_string(),
+        password: "".to_string(),
+    };
+    println!("#user_login");
+    println!("{:?}", payload);
+    let exists: Option<(i64, String)> = sqlx::query_as("SELECT id , password_hash FROM users WHERE email = ?")
+        .bind(&payload.email)
+        .fetch_optional(&s.db)
+        .await?;
+    println!("#exists");
+    println!("{:?}", exists);
+    if exists.is_none() {
+        return Err(bad("error , user is NONE"));
+    }  
+    let user_id = exists.unwrap().0;
+    Ok(Json(json!({ 
+        "ret": 0 , "user_id": user_id
+    })))
 }
 
 async fn user_create(
