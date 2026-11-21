@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>パスキー認証デモ（Windows Hello）</title>
+  <style>
+    body { font-family: "Segoe UI", "Yu Gothic UI", sans-serif; max-width: 420px; margin: 40px auto; padding: 0 16px; color: #222; }
+    h1 { font-size: 1.4rem; }
+    fieldset { border: 1px solid #ccc; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    legend { font-weight: bold; padding: 0 6px; }
+    label { display: block; margin: 8px 0 4px; font-size: 0.9rem; }
+    input { width: 100%; box-sizing: border-box; padding: 8px; font-size: 1rem; }
+    button { margin-top: 12px; padding: 10px 14px; font-size: 1rem; cursor: pointer; border-radius: 6px; border: 1px solid #0067c0; background: #0067c0; color: #fff; width: 100%; }
+    button.secondary { background: #fff; color: #0067c0; }
+    button:disabled { opacity: .5; cursor: default; }
+    #status { margin-top: 12px; padding: 10px; border-radius: 6px; background: #f3f3f3; white-space: pre-wrap; font-size: 0.9rem; min-height: 1.5em; }
+    #status.error { background: #fde7e9; color: #a4262c; }
+    #status.ok { background: #dff6dd; color: #107c10; }
+    #me { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <h1>パスキー認証デモ（Windows Hello）</h1>
+  <p id="platform" style="font-size:0.85rem;color:#555"></p>
+
+  <div id="loggedOut">
+    <fieldset>
+      <legend>新規登録</legend>
+      <label for="regUsername">ユーザー名</label>
+      <input id="regUsername" autocomplete="username webauthn" placeholder="例: taro">
+      <label for="regDisplayName">表示名</label>
+      <input id="regDisplayName" placeholder="例: 山田太郎">
+      <button id="btnRegister">Windows Hello でパスキーを登録</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>ログイン</legend>
+      <label for="loginUsername">ユーザー名</label>
+      <input id="loginUsername" autocomplete="username webauthn" placeholder="例: taro">
+      <button id="btnLogin">パスキーでログイン</button>
+    </fieldset>
+  </div>
+
+  <div id="loggedIn" hidden>
+    <fieldset>
+      <legend>ログイン中</legend>
+      <div id="me"></div>
+      <button id="btnLogout" class="secondary">ログアウト</button>
+    </fieldset>
+  </div>
+
+  <div id="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
