@@ -16,6 +16,12 @@ Rust Axum , Passkey Authrize SQLite Example
 * Linux
 
 ***
+* env-value
+```
+export RP_ID=localhost
+export RP_ORIGIN=http://localhost:9000
+```
+***
 * Test-code
 * signup
 

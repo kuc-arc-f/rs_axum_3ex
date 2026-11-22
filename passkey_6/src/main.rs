@@ -266,8 +266,7 @@ async fn register_start(
 
     Ok(Json(json!({ "challenge_id": challenge_id, "options": ccr })))
 }
-
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 struct RegFinishReq {
     challenge_id: Uuid,
     credential: RegisterPublicKeyCredential,
@@ -283,6 +282,9 @@ async fn register_finish(
         .await
         .remove(&req.challenge_id)
         .ok_or_else(|| bad("チャレンジが無効または期限切れです"))?;
+    println!("#req");
+    println!("{:?}", req);
+    //println!("{:?}", exists);
 
     let passkey = s
         .webauthn
