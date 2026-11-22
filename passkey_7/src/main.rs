@@ -52,7 +52,7 @@ async fn main() -> anyhow::Result<()> {
         .max_connections(10)
         .connect(&database_url)
         .await?;
-    sqlx::migrate!("./migrations").run(&db).await?;
+    //sqlx::migrate!("./migrations").run(&db).await?;
 
     // WebAuthn (Relying Party) 設定
     let webauthn = WebauthnBuilder::new(&rp_id, &rp_origin)?

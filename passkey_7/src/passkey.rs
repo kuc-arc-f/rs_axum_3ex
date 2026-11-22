@@ -54,8 +54,9 @@ pub struct StartResp<T> {
 pub async fn user_login(
     State(st): State<AppState>,
     Json(req): Json<super::models::UserCreateReq>,
-) -> AppResult<Json<super::models::UserRes>> {
-    let mut user = super::models::UserRes {
+) -> AppResult<Json<super::models::UserLoginRes>> {
+    let mut user = super::models::UserLoginRes {
+        id: 0,
         email: "".to_string(),
         password: "".to_string(),
     };   
@@ -75,7 +76,7 @@ pub async fn user_login(
     }
     let users: Vec<super::models::DbUser> = sqlx::query_as::<_, super::models::DbUser>(
         r#"
-        SELECT email, password_hash
+        SELECT id, email, password_hash
         FROM users
         WHERE email = $1
         "#
@@ -85,14 +86,18 @@ pub async fn user_login(
     .await.unwrap();
 
     let mut user_count = 0;
+    let mut user_id = 0;
     let mut db_pass = "".to_string();
     for user in users {
         db_pass = user.password_hash.clone();
+        user_id = user.id;
         println!("email: {}", user.email);
         println!("password_hash: {}", db_pass);
         user_count += 1;
     }    
     println!("user_count={}", user_count);
+    println!("user_id={}", user_id);
+    user.id = user_id; 
     if user_count == 0 {
         println!("error , user_count == 0");
         return Err(AppError::BadRequest(
@@ -107,7 +112,9 @@ pub async fn user_login(
         return Err(AppError::BadRequest(
             "error , password=NG",
         ));        
-    }    
+    }   
+    //user_id
+
     Ok(Json(
         user,
     ))

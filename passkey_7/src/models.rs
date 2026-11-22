@@ -21,7 +21,15 @@ pub struct UserRes {
     pub password: String,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, sqlx::FromRow)]
+pub struct UserLoginRes {
+    pub id: i32,
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, sqlx::FromRow)]
 pub struct DbUser {
+    pub id: i32,
     pub email: String,
     pub password_hash: String,
 }
