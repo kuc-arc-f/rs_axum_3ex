@@ -11,14 +11,6 @@ use axum::{
     Router,
     routing::{get, post},
 };
-/*
-use axum::{
-    Json,
-    extract::State,
-    http::{HeaderMap, StatusCode, header},
-    response::{IntoResponse, Response},
-};
-*/
 use sqlx::postgres::PgPoolOptions;
 use tower_http::{services::ServeDir, trace::TraceLayer};
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
@@ -71,6 +63,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/login", post(passkey::user_login))
         .route("/api/login/start", post(passkey::login_start))
         .route("/api/login/finish", post(passkey::login_finish))
+        .route("/api/user_get_id", post(passkey::user_get_id))
         .route("/api/me", get(passkey::me))
         .route("/api/logout", post(passkey::logout))
         .fallback_service(ServeDir::new("static"))

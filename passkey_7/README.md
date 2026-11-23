@@ -16,13 +16,12 @@ Rust Axum , Passkey Authrize PostgreSQL  Example
 * Rust
 
 ***
-### front , tanstack Start
-
-https://github.com/kuc-arc-f/tanstack_app_1pri/tree/main/rs_passkey_2
-
-* related Server
+### related Server
 
 https://github.com/kuc-arc-f/rs_auth_passkey_pg
+
+***
+Table: schema.sql
 
 ***
 * .env

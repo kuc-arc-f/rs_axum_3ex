@@ -20,14 +20,13 @@ use crate::{
 const CHALLENGE_TTL_SECS: f64 = 300.0;
 
 // ---------- リクエスト / レスポンス型 ----------
-
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct RegisterStartReq {
     username: String,
     display_name: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct RegisterFinishReq {
     challenge_id: Uuid,
     credential: RegisterPublicKeyCredential,
@@ -49,6 +48,67 @@ pub struct LoginFinishReq {
 pub struct StartResp<T> {
     challenge_id: Uuid,
     options: T,
+}
+
+
+pub async fn user_get_id(
+    State(st): State<AppState>,
+    Json(req): Json<super::models::UserIdReq>,
+) -> AppResult<Json<super::models::UserLoginRes>> {
+    let mut user = super::models::UserLoginRes {
+        id: 0,
+        email: "".to_string(),
+        password: "".to_string(),
+    };   
+    println!("#req"); 
+    println!("{:?}", req); 
+    let email = req.email.trim();
+    if email.is_empty() {
+        return Err(AppError::BadRequest(
+            "error , email =NONE",
+        ));        
+    }
+    /*
+    let password = req.password.trim();
+    if password.is_empty() {
+        return Err(AppError::BadRequest(
+            "error, password=NONE ",
+        ));
+    }
+    */
+    let users: Vec<super::models::DbUser> = sqlx::query_as::<_, super::models::DbUser>(
+        r#"
+        SELECT id, email, password_hash
+        FROM users
+        WHERE email = $1
+        "#
+    )
+    .bind(email)
+    .fetch_all(&st.db)
+    .await.unwrap();
+
+    let mut user_count = 0;
+    let mut user_id = 0;
+    let mut db_pass = "".to_string();
+    for user in users {
+        db_pass = user.password_hash.clone();
+        user_id = user.id;
+        println!("email: {}", user.email);
+        println!("password_hash: {}", db_pass);
+        user_count += 1;
+    }    
+    println!("user_count={}", user_count);
+    println!("user_id={}", user_id);
+    user.id = user_id; 
+    if user_count == 0 {
+        println!("error , user_count == 0");
+        return Err(AppError::BadRequest(
+            "error , user_count == 0",
+        ));        
+    }
+    Ok(Json(
+        user,
+    ))
 }
 
 pub async fn user_login(
@@ -172,6 +232,8 @@ pub async fn register_start(
             "ユーザー名と表示名は1〜64文字で入力してください",
         ));
     }
+    println!("#req");
+    println!("{:?}", &req);
 
     let exists: bool = sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM passkey_users WHERE username = $1)")
         .bind(&username)
