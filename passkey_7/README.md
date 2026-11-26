@@ -29,7 +29,7 @@ Table: schema.sql
 DATABASE_URL=postgres://root:admin@localhost:5432/mydb
 # WebAuthn の RP ID（ドメイン名）と Origin。ローカル開発は localhost のまま
 RP_ID=localhost
-RP_ORIGIN=http://localhost:3000
+RP_ORIGIN=http://localhost:9000
 BIND_ADDR=127.0.0.1:3000
 # HTTPS 運用時は true にする
 COOKIE_SECURE=false
